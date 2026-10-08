@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Dashboard de Leads</title>
+<style>
+  :root{--ink:#1f2937;--mute:#6b7280;--line:#e5e7eb;--bg:#f4f6fb;--navy:#1e2a4a}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+  header{background:linear-gradient(135deg,#1e2a4a,#2f4a8a);color:#fff;padding:22px 28px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
+  header h1{margin:0;font-size:24px;letter-spacing:.3px}
+  header .sub{margin-top:4px;font-size:13px;color:#c7d6f5}
+  .datepick{display:flex;align-items:center;gap:8px;font-size:13px;color:#c7d6f5}
+  .datepick select{border:0;border-radius:8px;padding:8px 10px;font-size:14px;font-weight:600;color:var(--navy);background:#fff}
+  main{max-width:1280px;margin:0 auto;padding:22px 20px 40px}
+  .cards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  @media(max-width:1000px){.cards{grid-template-columns:repeat(2,1fr)}}
+  @media(max-width:520px){.cards{grid-template-columns:1fr}}
+  .card{border-radius:14px;padding:18px 12px 14px;text-align:center;border:1px solid;min-height:118px;display:flex;flex-direction:column;justify-content:center;gap:2px}
+  .card .num{font-size:42px;font-weight:800;line-height:1.05}
+  .card .lab{font-size:11px;letter-spacing:1.2px;text-transform:uppercase;color:var(--mute);font-weight:600}
+  .card .sub{font-size:12px;color:#4b5563;margin-top:3px}
+  .card .sub b{font-weight:700}
+  .nd{font-size:10px;color:#9ca3af}
+  .pos{color:#16a34a;font-weight:600}.neg{color:#dc2626;font-weight:600}.eq{color:#9ca3af}
+  .indigo{background:#eef2ff;border-color:#c7d2fe}.indigo .num{color:#4f46e5}
+  .red{background:#fef2f2;border-color:#fecaca}.red .num{color:#dc2626}
+  .green{background:#ecfdf5;border-color:#bbf7d0}.green .num{color:#16a34a}
+  .sky{background:#e0f2fe;border-color:#bae6fd}.sky .num{color:#0ea5e9}
+  .emerald{background:#ecfdf5;border-color:#6ee7b7}.emerald .num{color:#059669}
+  .violet{background:#f5f3ff;border-color:#ddd6fe}.violet .num{color:#7c3aed}
+  .orange{background:#fff7ed;border-color:#fed7aa}.orange .num{color:#ea580c}
+  .rose{background:#fff1f2;border-color:#fecdd3}.rose .num{color:#e11d48}
+  .cyan{background:#ecfeff;border-color:#a5f3fc}.cyan .num{color:#0891b2}
+  .panel{margin-top:22px;background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden}
+  .panel-head{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--line)}
+  .panel-head .bar{width:4px;height:16px;background:#facc15;border-radius:2px}
+  .panel-head h2{margin:0;font-size:12px;letter-spacing:1.2px;color:#475569}
+  .panel-head .meta{font-size:11px;color:#94a3b8;text-transform:uppercase;letter-spacing:.6px}
+  .tablewrap{overflow-x:auto}
+  table{width:100%;border-collapse:collapse;min-width:900px;font-size:13px}
+  thead th{background:#eef0f6;color:#64748b;font-size:10.5px;letter-spacing:.5px;text-transform:uppercase;padding:11px 6px;text-align:center;cursor:pointer;user-select:none;white-space:nowrap}
+  thead th:hover{background:#e3e7f1}
+  thead th.active{color:#1e2a4a}
+  thead th.left{text-align:left}
+  tbody td{padding:10px 6px;text-align:center;border-bottom:1px solid #f1f5f9;vertical-align:middle}
+  tbody tr:hover{background:#fafbff}
+  td.rank{width:46px;font-size:18px;color:#64748b}
+  td.left{text-align:left}
+  td.name{font-weight:700;max-width:110px;font-size:14px}
+  .val{font-size:15px;font-weight:600}
+  .val small{font-size:10px;color:#94a3b8;font-weight:500}
+  .vs{font-size:10px;line-height:1.2;margin-top:2px;white-space:nowrap}
+  .obj-g{color:#16a34a}.obj-o{color:#ea580c}.obj-r{color:#dc2626}
+  .obj b{font-size:16px}.obj span{font-size:11px;color:#94a3b8}
+  tfoot td{padding:12px 8px;text-align:center;background:#f8fafc;font-weight:700;border-top:2px solid var(--line)}
+  tfoot td.left{text-align:left}
+  .note{margin:0;padding:12px 18px 16px;font-size:11px;color:#9ca3af;line-height:1.5}
+  .empty{padding:40px;text-align:center;color:var(--mute)}
+  @media print{header{background:#1e2a4a!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}.datepick{display:none}}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>Dashboard de Leads</h1>
+    <div class="sub" id="sub"></div>
+  </div>
+  <div class="datepick"><label for="fecha">Datos al</label><select id="fecha"></select></div>
+</header>
+<main>
+  <section class="cards" id="cards"></section>
+  <section class="panel">
+    <div class="panel-head">
+      <span class="bar"></span><h2>RANKING DE ASESORES</h2>
+      <span class="meta" id="count"></span>
+      <span class="meta" id="sortinfo"></span>
+    </div>
+    <div class="tablewrap">
+      <table>
+        <thead id="thead"></thead>
+        <tbody id="tbody"></tbody>
+        <tfoot id="tfoot"></tfoot>
+      </table>
+    </div>
+    <p class="note" id="note"></p>
+  </section>
+</main>
+
+<script src="data.js"></script>
+<script>
+(function(){
+  const D = window.DATA;
+  const cfg = D.config;
+  const snaps = D.snapshots.slice().sort((a,b)=>a.fecha.localeCompare(b.fecha));
+  let idx = snaps.length - 1;
+  let sortKey = 'convertidos', sortDir = -1;
+
+  const $ = id => document.getElementById(id);
+  const fmt = n => Number(n).toLocaleString('es-AR');
+  const fdate = s => { const [y,m,d] = s.split('-'); return d+'/'+m+'/'+y; };
+  const pct = (a,b) => b ? Math.round(a/b*100) : 0;
+  const sum = (arr,k) => arr.reduce((t,x)=>t+(x[k]||0),0);
+
+  const COLS = [
+    {k:'leads',        label:'Leads',          good:'up'},
+    {k:'atacados',     label:'Atacados',       good:'up'},
+    {k:'contactados',  label:'Contactados',    good:'up', pct:true},
+    {k:'obj',          label:'Vs Obj Día',     good:'up', src:'contactados', obj:true},
+    {k:'convertidos',  label:'Convertidos',    good:'up'},
+    {k:'negociacion',  label:'Negociación',    good:'up'},
+    {k:'pendiente',    label:'Pendiente',      good:'down'},
+    {k:'rechazado',    label:'Rechazado',      good:'down'},
+    {k:'potenciados',  label:'Potenciados M0', good:'up'}
+  ];
+
+  function delta(cur, prev, good){
+    if (prev === null || prev === undefined) return '<div class="vs nd">(sin dato ayer)</div>';
+    const d = cur - prev;
+    if (d === 0) return '<div class="vs eq">=</div>';
+    const ok = (d > 0) === (good === 'up');
+    return '<div class="vs '+(ok?'pos':'neg')+'">'+(d>0?'+':'')+fmt(d)+'</div>';
+  }
+
+  function totals(s){
+    const a = s.asesores, leads = sum(a,'leads'), atac = sum(a,'atacados');
+    return {leads, atacados:atac, noAtacados:leads-atac, contactados:sum(a,'contactados'),
+      convertidos:sum(a,'convertidos'), negociacion:sum(a,'negociacion'), pendiente:sum(a,'pendiente'),
+      rechazado:sum(a,'rechazado'), potenciados:sum(a,'potenciados')};
+  }
+
+  function renderCards(cur, prev){
+    const t = totals(cur), p = prev ? totals(prev) : null;
+    const dd = (k,good) => delta(t[k], p ? p[k] : null, good).replace('class="vs','class="nd vs');
+    const proy = cur.diasHabiles ? Math.round(t.convertidos / cur.diasHabiles * cfg.diasHabilesMes) : 0;
+    const cards = [
+      {c:'indigo', n:t.leads, l:'Leads', s:''},
+      {c:'red', n:t.noAtacados, l:'No atacados', s:'<span style="color:#dc2626">'+pct(t.noAtacados,t.leads)+'% del total</span>'},
+      {c:'green', n:t.atacados, l:'Atacados', s:''},
+      {c:'sky', n:t.contactados, l:'Contactados', s:pct(t.contactados,t.leads)+'% de los leads '+dd('contactados','up')},
+      {c:'emerald', n:t.convertidos, l:'Convertidos', s:dd('convertidos','up')+'<b style="color:#047857">Proyectado: '+proy+'</b>'},
+      {c:'violet', n:t.negociacion, l:'Negociaciones', s:'<span style="color:#7c3aed">'+pct(t.negociacion,t.contactados)+'% de cont.</span> '+dd('negociacion','up')},
+      {c:'orange', n:t.pendiente, l:'Pendientes', s:dd('pendiente','down')},
+      {c:'rose', n:t.rechazado, l:'Rechazados', s:dd('rechazado','down')},
+      {c:'cyan', n:t.potenciados, l:'Potenciados M0', s:dd('potenciados','up')}
+    ];
+    $('cards').innerHTML = cards.map(x =>
+      '<div class="card '+x.c+'"><div class="num">'+fmt(x.n)+'</div><div class="lab">'+x.l+'</div>'+(x.s?'<div class="sub">'+x.s+'</div>':'')+'</div>'
+    ).join('');
+  }
+
+  function sorted(list){
+    const col = COLS.find(c=>c.k===sortKey);
+    const val = a => sortKey==='nombre' ? a.nombre : sortKey==='lider' ? a.lider : a[col.src||col.k];
+    return list.slice().sort((a,b)=>{
+      let va = val(a), vb = val(b), r;
+      if (typeof va === 'string') r = va.localeCompare(vb,'es') * sortDir;
+      else r = (va - vb) * sortDir;
+      if (r !== 0) return r;
+      if (sortKey==='convertidos'){
+        r = (b.negociacion - a.negociacion) || (b.contactados - a.contactados);
+        if (r !== 0) return r;
+      }
+      return a.nombre.localeCompare(b.nombre,'es');
+    });
+  }
+
+  function renderTable(cur, prev){
+    const target = cfg.objPorDia * cur.diasHabiles;
+    const prevMap = {};
+    if (prev) prev.asesores.forEach(a => prevMap[a.nombre] = a);
+
+    // encabezado
+    const arrow = k => sortKey===k ? (sortDir<0?' ▼':' ▲') : '';
+    let h = '<tr><th style="width:46px">#</th><th class="left'+(sortKey==='nombre'?' active':'')+'" data-k="nombre">Asesor'+arrow('nombre')+'</th><th class="left'+(sortKey==='lider'?' active':'')+'" data-k="lider">Team Leader'+arrow('lider')+'</th>';
+    COLS.forEach(c => { h += '<th class="'+(sortKey===c.k?'active':'')+'" data-k="'+c.k+'">'+c.label+arrow(c.k)+'</th>'; });
+    $('thead').innerHTML = h + '</tr>';
+    $('thead').querySelectorAll('th[data-k]').forEach(th => th.onclick = () => {
+      const k = th.dataset.k;
+      if (sortKey === k) sortDir = -sortDir; else { sortKey = k; sortDir = (k==='nombre'||k==='lider') ? 1 : -1; }
+      render();
+    });
+
+    // filas
+    const rows = sorted(cur.asesores), medals = ['🥇','🥈','🥉'];
+    $('tbody').innerHTML = rows.map((a,i) => {
+      const pa = prev ? prevMap[a.nombre] : null;
+      let tds = '<td class="rank">'+(i<3?medals[i]:(i+1))+'</td><td class="left name">'+a.nombre+'</td><td class="left">'+a.lider+'</td>';
+      COLS.forEach(c => {
+        const v = a[c.src||c.k], pv = pa ? pa[c.src||c.k] : null;
+        let main;
+        if (c.obj){
+          const cls = v >= target ? 'obj-g' : (target - v < cfg.objPorDia ? 'obj-o' : 'obj-r');
+          main = '<div class="obj"><b class="'+cls+'">'+v+'</b><span>/'+target+'</span></div>';
+        } else if (c.pct){
+          main = '<div class="val">'+fmt(v)+' <small>('+pct(v,a.leads)+'%)</small></div>';
+        } else {
+          main = '<div class="val">'+fmt(v)+'</div>';
+        }
+        tds += '<td>'+main+delta(v, pv, c.good)+'</td>';
+      });
+      return '<tr>'+tds+'</tr>';
+    }).join('');
+
+    // totales
+    const t = totals(cur), n = cur.asesores.length;
+    $('tfoot').innerHTML = '<tr><td></td><td class="left">Total equipo</td><td></td>' + COLS.map(c => {
+      if (c.obj) return '<td>'+fmt(t.contactados)+'<span style="color:#94a3b8;font-weight:500">/'+fmt(target*n)+'</span></td>';
+      if (c.pct) return '<td>'+fmt(t.contactados)+' <small style="color:#94a3b8">('+pct(t.contactados,t.leads)+'%)</small></td>';
+      return '<td>'+fmt(t[c.k])+'</td>';
+    }).join('') + '</tr>';
+
+    const names = {contactados:'contactados',convertidos:'convertidos',nombre:'asesor',lider:'team leader'};
+    const colName = (COLS.find(c=>c.k===sortKey)||{}).label || names[sortKey] || sortKey;
+    $('count').textContent = '('+n+' asesores)';
+    $('sortinfo').textContent = '· ordenado por '+colName.toLowerCase()+' · click en una columna para reordenar';
+    $('note').innerHTML = '"Vs Obj día" = contactados efectivos acumulados vs el objetivo nominal de '+cfg.objPorDia+' contactos efectivos por asesor y por día hábil ('+cur.diasHabiles+' días hábiles = '+target+'): verde si lo alcanza, naranja si le faltan menos de '+cfg.objPorDia+', rojo si no. El número chico debajo de cada celda es la variación vs. '+(prev?fdate(prev.fecha):'el dato anterior')+'.';
+  }
+
+  function render(){
+    const cur = snaps[idx], prev = idx > 0 ? snaps[idx-1] : null;
+    $('sub').textContent = 'Datos al ' + fdate(cur.fecha) + ' · ' + cur.asesores.length + ' asesores · ' + cur.diasHabiles + ' días hábiles';
+    renderCards(cur, prev);
+    renderTable(cur, prev);
+  }
+
+  if (!snaps.length){ document.querySelector('main').innerHTML = '<div class="empty">Todavía no hay datos cargados.</div>'; return; }
+  $('fecha').innerHTML = snaps.map((s,i)=>'<option value="'+i+'">'+fdate(s.fecha)+'</option>').reverse().join('');
+  $('fecha').value = idx;
+  $('fecha').onchange = e => { idx = +e.target.value; render(); };
+  render();
+})();
+</script>
+</body>
+</html>

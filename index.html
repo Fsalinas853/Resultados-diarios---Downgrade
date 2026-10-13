@@ -89,8 +89,9 @@
   </section>
 </main>
 
-<script src="data.js"></script>
 <script>
+// Carga data.js siempre fresco (evita que el navegador muestre datos viejos)
+function start(){
 (function(){
   const D = window.DATA;
   const cfg = D.config;
@@ -232,6 +233,8 @@
   $('fecha').onchange = e => { idx = +e.target.value; render(); };
   render();
 })();
+}
+(function(){var t=document.createElement("script");t.src="data.js?v="+Date.now();t.onload=start;document.head.appendChild(t);})();
 </script>
 </body>
 </html>

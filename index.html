@@ -161,7 +161,7 @@ function start(){
       else r = (va - vb) * sortDir;
       if (r !== 0) return r;
       if (sortKey==='convertidos'){
-        r = (b.negociacion - a.negociacion) || (b.contactados - a.contactados);
+        r = (b.contactados/b.leads - a.contactados/a.leads) || (b.contactados - a.contactados);
         if (r !== 0) return r;
       }
       return a.nombre.localeCompare(b.nombre,'es');
@@ -216,7 +216,7 @@ function start(){
     const names = {contactados:'contactados',convertidos:'convertidos',nombre:'asesor',lider:'team leader'};
     const colName = (COLS.find(c=>c.k===sortKey)||{}).label || names[sortKey] || sortKey;
     $('count').textContent = '('+n+' asesores)';
-    $('sortinfo').textContent = '· ordenado por '+colName.toLowerCase()+' · click en una columna para reordenar';
+    $('sortinfo').textContent = '· ordenado por '+colName.toLowerCase()+(sortKey==='convertidos'?' y luego contactabilidad':'')+' · click en una columna para reordenar';
     $('note').innerHTML = '"Vs Obj día" = contactados efectivos acumulados vs el objetivo nominal de '+cfg.objPorDia+' contactos efectivos por asesor y por día hábil ('+cur.diasHabiles+' días hábiles = '+target+'): verde si lo alcanza, naranja si le faltan menos de '+cfg.objPorDia+', rojo si no. El número chico debajo de cada celda es la variación vs. '+(prev?fdate(prev.fecha):'el dato anterior')+'.';
   }
 

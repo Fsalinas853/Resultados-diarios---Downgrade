@@ -20,6 +20,18 @@ window.DATA = {
         { nombre: "Soledad Toro",      lider: "Fausto", leads: 191, atacados: 191, contactados: 37, convertidos: 0, negociacion: 3, pendiente: 27, rechazado: 7,  potenciados: 0 },
         { nombre: "Abigail Barroso",   lider: "Fausto", leads: 190, atacados: 190, contactados: 29, convertidos: 0, negociacion: 2, pendiente: 24, rechazado: 3,  potenciados: 0 }
       ]
+    },
+    {
+      fecha: "2026-10-09",
+      diasHabiles: 7,
+      asesores: [
+        { nombre: "Soledad Toro",      lider: "Fausto", leads: 192, atacados: 191, contactados: 44, convertidos: 1, negociacion: 3, pendiente: 31, rechazado: 9,  potenciados: 0 },
+        { nombre: "Abigail Barroso",   lider: "Fausto", leads: 192, atacados: 190, contactados: 31, convertidos: 1, negociacion: 1, pendiente: 26, rechazado: 3,  potenciados: 0 },
+        { nombre: "Nahir Apud",        lider: "Fausto", leads: 191, atacados: 189, contactados: 26, convertidos: 0, negociacion: 2, pendiente: 22, rechazado: 2,  potenciados: 0 },
+        { nombre: "Florencia Wehner",  lider: "Fausto", leads: 190, atacados: 116, contactados: 24, convertidos: 1, negociacion: 6, pendiente: 7,  rechazado: 12, potenciados: 0 },
+        { nombre: "Stefania Roa",      lider: "Fausto", leads: 191, atacados: 190, contactados: 20, convertidos: 0, negociacion: 2, pendiente: 19, rechazado: 2,  potenciados: 0 },
+        { nombre: "Milagros Grimaldi", lider: "Fausto", leads: 190, atacados: 190, contactados: 13, convertidos: 0, negociacion: 0, pendiente: 11, rechazado: 3,  potenciados: 0 }
+      ]
     }
   ]
 };

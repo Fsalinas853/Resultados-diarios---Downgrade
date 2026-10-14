@@ -118,7 +118,7 @@ function start(){
   ];
 
   function delta(cur, prev, good){
-    if (prev === null || prev === undefined) return '<div class="vs nd">(sin dato ayer)</div>';
+    if (prev === null || prev === undefined) return '';
     const d = cur - prev;
     if (d === 0) return '<div class="vs eq">=</div>';
     const ok = (d > 0) === (good === 'up');
